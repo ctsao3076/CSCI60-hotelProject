@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<div class="container">
+  <div class="reportLayout">
+
+    <!-- Sidebar of Reports -->
+    <aside id="catLeft">
+      <div class="eyebrow" style="padding: 10px 22px; margin-bottom: 8px;">Reports</div>
+      {% for r in reports %}
+        {% if r.endpoint == current_endpoint %}
+          <p class="selectedCategory">{{ r.id }}. {{ r.label }}</p>
+        {% else %}
+          <p class="notSelectedCategory">
+            <a href="{{ url_for(r.endpoint) }}">{{ r.id }}. {{ r.label }}</a>
+          </p>
+        {% endif %}
+      {% endfor %}
+    </aside>
+
+    <!-- Main Report -->
+    <section id="catRight">
+      <div class="reportHeader">
+        <span class="eyebrow">Report</span>
+        <h1>{{ title }}</h1>
+        <p class="reportDescription">{{ description }}</p>
+      </div>
+
+      {# ----- Optional filter forms ----- #}
+      {% if form_kind == 'dates' %}
+        <form class="filterForm" method="get">
+          <div class="filterField">
+            <label for="start_date">Check-in on or after</label>
+            <input type="date" id="start_date" name="start_date"
+                   value="{{ form_values.start_date }}" required>
+          </div>
+          <div class="filterField">
+            <label for="end_date">Check-out on or before</label>
+            <input type="date" id="end_date" name="end_date"
+                   value="{{ form_values.end_date }}" required>
+          </div>
+          <button type="submit" class="submitButton">Find Rooms</button>
+        </form>
+      {% elif form_kind == 'capacity' %}
+        <form class="filterForm" method="get">
+          <div class="filterField">
+            <label for="capacity">Minimum sleeping capacity</label>
+            <input type="number" id="capacity" name="capacity"
+                   min="1" value="{{ form_values.capacity }}" required>
+          </div>
+          <button type="submit" class="submitButton">Find Rooms</button>
+        </form>
+      {% elif form_kind == 'customer' %}
+        <form class="filterForm" method="get">
+          <div class="filterField">
+            <label for="customer_id">Pick a guest</label>
+            <select id="customer_id" name="customer_id" required>
+              <option value="">— select —</option>
+              {% for c in customers %}
+                <option value="{{ c.customerId }}"
+                  {% if form_values.customer_id == c.customerId %}selected{% endif %}>
+                  {{ c.name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="submitButton">Show History</button>
+        </form>
+      {% endif %}
+
+      {# ----- Results table ----- #}
+      {% if rows and rows|length > 0 %}
+      <table class="reportTable">
+        <thead>
+          <tr>
+            {% for col in columns %}
+              <th>{{ col.header }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr>
+            {% for col in columns %}
+              <td>
+                {% set value = row[col.key] %}
+                {% if value is none or value == '' %}
+                  <span class="muted">—</span>
+                {% elif col.header in ('Toilet','Bath','Phone','TV','Closet','Smoking','Handicapped') %}
+                  {{ 'Yes' if value == 1 else 'No' }}
+                {% else %}
+                  {{ value }}
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="emptyState">
+          {% if form_kind %}
+            Choose a filter above to see results.
+          {% else %}
+            No results to display right now.
+          {% endif %}
+        </div>
+      {% endif %}
+    </section>
+
+  </div>
+</div>
+
+{% endblock %}

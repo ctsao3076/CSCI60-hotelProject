@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<!-- Home Banner-->
+<section class="hero">
+  <img class="heroImg" src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&w=1800&q=80" alt="Last Resort Hotels lobby">
+  <div class="heroInner">
+    <span class="eyebrow">A Legacy of Luxury Hospitality</span>
+    <h1>Where every stay becomes a story</h1>
+    <p>From oceanfront suites to grand ballrooms, Last Resort curates moments worth remembering. A collection of hotels devoted to timeless service.</p>
+    <div class="heroButtons">
+      <a class="heroButton solid" href="{{ url_for('add_reservation') }}">Reserve a Stay</a>
+      <a class="heroButton" href="{{ url_for('rooms_showcase') }}">Explore Rooms</a>
+    </div>
+  </div>
+</section>
+
+<!-- Statistic Bar -->
+{% if summary %}
+<div class="statBar">
+  <div class="statCell">
+    <div class="statNumber">{{ summary.totalRooms }}</div>
+    <div class="statLabel">Rooms in System</div>
+  </div>
+  <div class="statCell">
+    <div class="statNumber">{{ summary.occupiedRooms }}</div>
+    <div class="statLabel">Currently Occupied</div>
+  </div>
+  <div class="statCell">
+    <div class="statNumber">{{ summary.openReservations }}</div>
+    <div class="statLabel">Open Reservations</div>
+  </div>
+  <div class="statCell">
+    <div class="statNumber">{{ summary.upcomingEvents }}</div>
+    <div class="statLabel">Upcoming Events</div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Welcome -->
+<section class="section">
+  <div class="container">
+    <div class="sectionHeader">
+      <span class="eyebrow">A Welcome From Our Concierge</span>
+      <h1 class="display" style="font-size: 2.6em;">Discover Last Resort Hotels</h1>
+      <hr class="rule center">
+      <p>Operations, reservations, and analytics refined into a single place. Manage every guest interaction with the calm confidence of a five-star front desk.</p>
+      {% if complex %}
+        <div style="margin-top: 22px;">
+          <span class="complexBadge">{{ complex.complexName }} &middot; {{ complex.city }}, {{ complex.state }}</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section" style="padding-top: 0;">
+  <div class="container">
+    <div class="featureGrid">
+      <article class="featureCard">
+        <img class="photo" src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&w=1200&q=80" alt="Sleeping room">
+        <div class="body">
+          <span class="eyebrow">Stay</span>
+          <h3>Rooms &amp; Suites</h3>
+          <p>Plush bedding, marble baths, and views to wake up to. Sleeping rooms, suites, and connecting accommodations for every kind of traveler.</p>
+          <a class="featureLink" href="{{ url_for('rooms_showcase') }}">View Rooms &rsaquo;</a>
+        </div>
+      </article>
+      <article class="featureCard">
+        <img class="photo" src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&w=1200&q=80" alt="Ballroom meeting space">
+        <div class="body">
+          <span class="eyebrow">Meet</span>
+          <h3>Events &amp; Ballrooms</h3>
+          <p>Galas seating up to ten thousand, intimate boardrooms, garden ceremonies, and everything in between. Staged with white-glove precision.</p>
+          <a class="featureLink" href="{{ url_for('upcoming_events') }}">Upcoming Events &rsaquo;</a>
+        </div>
+      </article>
+      <article class="featureCard">
+        <img class="photo" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&w=1200&q=80" alt="Restaurant dining">
+        <div class="body">
+          <span class="eyebrow">Dine</span>
+          <h3>Restaurants &amp; Spa</h3>
+          <p>From the Ocean Grill to the Coral Health Club, every facility is reachable from a single guest folio. Effortless billing, effortless service.</p>
+          <a class="featureLink" href="{{ url_for('amenities_showcase') }}">Discover Amenities &rsaquo;</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Operations -->
+<section class="section" style="background: var(--cream); padding-top: 80px; padding-bottom: 80px; border-top: 1px solid var(--stone); border-bottom: 1px solid var(--stone);">
+  <div class="container">
+    <div class="splitPanel">
+      <div class="photoCol">
+        <img class="photo" src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&w=1400&q=80" alt="Hotel lobby">
+      </div>
+      <div>
+        <span class="eyebrow">Operations, Refined</span>
+        <h2 style="font-size: 2.2em; margin-bottom: 16px;">A single dashboard for the entire complex</h2>
+        <hr class="rule">
+        <p style="color: var(--warm-gray); line-height: 1.8; margin-bottom: 22px;">
+          Track occupancy, guest loyalty, and revenue at a glance. Move guests between rooms with a single click, surface unpaid charges before checkout, and keep every facility.
+        </p>
+        <a class="btn" href="{{ url_for('dashboard') }}">View Live Dashboard</a>
+        <a class="btn outline" href="{{ url_for('room_change') }}" style="margin-left: 10px;">Change a Room</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reports -->
+<section class="section">
+  <div class="container">
+    <div class="sectionHeader">
+      <span class="eyebrow">For the Front Desk</span>
+      <h2 style="font-size: 2.2em; margin-bottom: 16px;">Browse Reports</h2>
+      <hr class="rule center">
+      <p>Stay Organized. From occupied rooms to guest stay history.</p>
+    </div>
+
+    <div class="itemGrid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+      {% for r in reports %}
+        <a href="{{ url_for(r.endpoint) }}" style="text-decoration: none;">
+          <div class="itemCard" style="padding: 22px 24px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div style="width: 38px; height: 38px; line-height: 38px; text-align: center; background: var(--gold); color: var(--charcoal); font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.05em;">{{ r.id }}</div>
+              <div>
+                <div style="color: var(--charcoal); font-weight: 700; font-size: 0.95em;">{{ r.label }}</div>
+                <div class="muted" style="font-size: 0.78em; letter-spacing: 0.06em;">View report &rsaquo;</div>
+              </div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

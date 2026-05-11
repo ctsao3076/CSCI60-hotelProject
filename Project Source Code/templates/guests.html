@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<section class="pageIntro">
+  <span class="eyebrow">Guest Records</span>
+  <h1>Manage Guests</h1>
+  <hr class="rule center">
+  <p>Every guest, host, and billed party in the system. Move a guest to a different room, view their stay history, or remove them entirely.</p>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <div style="display: flex; gap: 12px; justify-content: flex-end; margin-bottom: 22px;">
+      <a class="btn" href="{{ url_for('add_customer') }}">+ Add Guest</a>
+      <a class="btn outline" href="{{ url_for('room_change') }}">Change Room</a>
+    </div>
+
+    {% if customers and customers|length > 0 %}
+    <table class="reportTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Stays</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in customers %}
+        <tr>
+          <td><strong style="color: var(--charcoal);">{{ c.name }}</strong></td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.phone }}</td>
+          <td>{{ c.stays }}</td>
+          <td>
+            {% if c.activeStay %}
+              <span style="color: var(--gold); font-weight: 700; font-size: 0.78em; letter-spacing: 0.16em; text-transform: uppercase;">In House</span>
+            {% elif c.stays > 0 %}
+              <span style="color: var(--warm-gray); font-size: 0.85em;">Past Guest</span>
+            {% else %}
+              <span style="color: var(--warm-gray); font-size: 0.85em;">No stays</span>
+            {% endif %}
+          </td>
+          <td class="actionCell" style="text-align: right;">
+            <a class="commandButton" href="{{ url_for('guest_history', customer_id=c.customerId) }}">History</a>
+            {% if c.activeStay %}
+              <span class="muted" style="font-size: 0.78em; margin-left: 8px;" title="Cannot delete while guest is in-house">Cannot delete</span>
+            {% else %}
+              <form class="inlineForm" method="POST"
+                    action="{{ url_for('delete_guest', customer_id=c.customerId) }}"
+                    onsubmit="return confirm('Permanently delete {{ c.name }}? This cascades to their reservations, room assignments, and charges.');"
+                    style="margin-left: 8px;">
+                <button type="submit">Delete</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <div class="emptyState">No guests in the system yet.</div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

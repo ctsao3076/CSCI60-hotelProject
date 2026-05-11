@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<section class="pageIntro">
+  <span class="eyebrow">For Every Guest</span>
+  <h1>Amenities &amp; Facilities</h1>
+  <hr class="rule center">
+  <p>Beyond the guest room: restaurants, health club, business center, pool deck, and spa. Every facility billable to a single guest folio.</p>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Standard Amenities -->
+    <div class="featureGrid">
+      <article class="featureCard">
+        <img class="photo" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&w=1200&q=80" alt="Ocean Grill restaurant">
+        <div class="body">
+          <span class="eyebrow">Restaurant</span>
+          <h3>Ocean Grill</h3>
+          <p>Coastal cuisine and a curated cellar, available for lunch, dinner, and supper service. In-room dining delivered around the clock.</p>
+          <a class="featureLink" href="#all-facilities">View all dining &rsaquo;</a>
+        </div>
+      </article>
+
+      <article class="featureCard">
+        <img class="photo" src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&w=1200&q=80" alt="Resort pool">
+        <div class="body">
+          <span class="eyebrow">Pool &amp; Patio</span>
+          <h3>Indoor &amp; Outdoor Pools</h3>
+          <p>Heated indoor lap pool and outdoor leisure pool with cabana service. Patios available as event venues for weddings and receptions.</p>
+          <a class="featureLink" href="#all-facilities">Learn more &rsaquo;</a>
+        </div>
+      </article>
+
+      <article class="featureCard">
+        <img class="photo" src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&w=1200&q=80" alt="Spa">
+        <div class="body">
+          <span class="eyebrow">Spa &amp; Wellness</span>
+          <h3>Coral Health Club</h3>
+          <p>Massage therapists, sauna, racquetball courts, and a 24-hour fitness center. Treatments charged directly to your guest folio.</p>
+          <a class="featureLink" href="#all-facilities">Reserve a treatment &rsaquo;</a>
+        </div>
+      </article>
+    </div>
+
+    <!-- All Facilities -->
+    <div id="all-facilities" class="sectionHeader" style="margin-top: 80px;">
+      <span class="eyebrow">Live Directory</span>
+      <h2 style="font-size: 2em;">Every facility, every complex</h2>
+      <hr class="rule center">
+      <p>All facilities currently registered against the active hotel complex.</p>
+    </div>
+
+    {% if facilities and facilities|length > 0 %}
+    <div class="itemGrid">
+      {% for f in facilities %}
+        <article class="itemCard">
+          <img class="photo"
+               src="{% if f.facilityType == 'RESTAURANT' %}https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&w=900&q=80{% elif f.facilityType == 'HEALTH_CLUB' %}https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&w=900&q=80{% elif f.facilityType == 'BUSINESS_CENTER' %}https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&w=900&q=80{% elif f.facilityType == 'POOL' %}https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&w=900&q=80{% elif f.facilityType == 'SPA' %}https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&w=900&q=80{% else %}https://images.unsplash.com/photo-1455587734955-081b22074882?auto=format&w=900&q=80{% endif %}"
+               alt="{{ f.facilityName }}">
+          <div class="body">
+            <span class="badge">{{ f.facilityType|replace('_',' ')|title }}</span>
+            <h3>{{ f.facilityName }}</h3>
+            <p>{{ f.locationDescription }}</p>
+            <div class="meta">
+              <span>{{ f.complexName }}</span>
+              <span><strong>Open</strong></span>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="emptyState">No facilities registered yet.</div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

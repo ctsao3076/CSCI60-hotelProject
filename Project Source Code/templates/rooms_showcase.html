@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<section class="pageIntro">
+  <span class="eyebrow">Accommodations</span>
+  <h1>Rooms &amp; Suites</h1>
+  <hr class="rule center">
+  <p>From sleeping rooms to grand suites with private meeting space, every accommodation at Last Resort is designed for ease, privacy, and quiet luxury.</p>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Room types -->
+    <div class="featureGrid">
+      <article class="featureCard">
+        <img class="photo" src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&w=1200&q=80" alt="Sleeping room">
+        <div class="body">
+          <span class="eyebrow">Sleeping Room</span>
+          <h3>Classic Guest Room</h3>
+          <p>One or two double beds: regular, queen, or king. Smoking and non-smoking floors available.</p>
+          <div class="meta">
+            <span><strong>{{ counts.sleeping }}</strong> available room types</span>
+            <span>From <strong>${{ rates.sleeping or '—' }}</strong>/night</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="featureCard">
+        <img class="photo" src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&w=1200&q=80" alt="Suite with separate sitting room">
+        <div class="body">
+          <span class="eyebrow">Suite</span>
+          <h3>Executive Suite</h3>
+          <p>A sleeping room paired with a separate sitting/working room behind a single hallway door. Ideal for travelers who entertain or work in residence.</p>
+          <div class="meta">
+            <span><strong>{{ counts.suite }}</strong> available room types</span>
+            <span>From <strong>${{ rates.suite or '—' }}</strong>/night</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="featureCard">
+        <img class="photo" src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&w=1200&q=80" alt="Ballroom and meeting space">
+        <div class="body">
+          <span class="eyebrow">Meeting</span>
+          <h3>Ballrooms &amp; Meeting Rooms</h3>
+          <p>Seven daily time slots, partitioned ballrooms, and complimentary non-eating slots paired with paid meals. Up to ten thousand seated guests.</p>
+          <div class="meta">
+            <span><strong>{{ counts.meeting }}</strong> available room types</span>
+            <span>From <strong>${{ rates.meeting or '—' }}</strong>/slot</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Room Inventory -->
+    <div class="sectionHeader" style="margin-top: 80px;">
+      <span class="eyebrow">Inventory</span>
+      <h2 style="font-size: 2em;">Live room directory</h2>
+      <hr class="rule center">
+      <p>Every room in the database, with its current status. Click a room number to search for related guests or activity.</p>
+    </div>
+
+    {% if rooms and rooms|length > 0 %}
+    <div class="itemGrid">
+      {% for r in rooms %}
+        <article class="itemCard">
+          <img class="photo"
+               src="{% if r.roomType == 'SUITE' %}https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&w=900&q=80{% elif r.roomType == 'MEETING' %}https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&w=900&q=80{% else %}https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&w=900&q=80{% endif %}"
+               alt="{{ r.roomType }} room">
+          <div class="body">
+            <span class="badge">{{ r.roomType|title }}</span>
+            <h3>Room {{ r.roomNumber }}</h3>
+            <p>{{ r.wingDesignation }} &middot; {{ r.buildingName }}{% if r.maxSleepingGuests %} &middot; sleeps {{ r.maxSleepingGuests }}{% endif %}</p>
+            <div class="meta">
+              <span style="color: {% if r.status == 'AVAILABLE' %}#3a7d49{% elif r.status == 'OCCUPIED' %}var(--rose){% else %}var(--warm-gray){% endif %};">
+                <strong>{{ r.status|title }}</strong>
+              </span>
+              <span><strong>${{ r.baseRentalRate }}</strong>{% if r.roomType != 'MEETING' %}/night{% else %}/slot{% endif %}</span>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="emptyState">No rooms in the system yet.</div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

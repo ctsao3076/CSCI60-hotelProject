@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<section class="pageIntro">
+  <span class="eyebrow">Front Desk</span>
+  <h1>Change a Guest's Room</h1>
+  <hr class="rule center">
+  <p>Move an active guest from one room to another. The previous assignment is closed and a new one opens. The guest still receives a single composite bill for the visit.</p>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width: 880px;">
+
+    <div class="formPage" style="margin-top: 0;">
+      <span class="eyebrow">Step 1 &middot; Select Active Stay</span>
+      <h1 style="font-size: 1.6em;">Move a guest to a new room</h1>
+      <p class="muted" style="margin-top: 6px;">Only currently checked-in guests appear here.</p>
+
+      {% if active_assignments and active_assignments|length > 0 %}
+      <form method="POST" class="formGrid">
+        <div class="formField full">
+          <label for="assignmentId">Active Stay *</label>
+          <select id="assignmentId" name="assignmentId" required>
+            <option value="">— select an active room assignment —</option>
+            {% for a in active_assignments %}
+              <option value="{{ a.assignmentId }}">
+                {{ a.guestName }} &middot; Room {{ a.roomNumber }} ({{ a.roomType|title }}) &middot; checked in {{ a.actualCheckIn or 'pending' }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="formField full">
+          <label for="newRoomId">New Room *</label>
+          <select id="newRoomId" name="newRoomId" required>
+            <option value="">— select a destination room —</option>
+            {% for r in available_rooms %}
+              <option value="{{ r.roomId }}">
+                Room {{ r.roomNumber }} &middot; {{ r.roomType|title }} &middot; {{ r.wingDesignation }} &middot; ${{ r.baseRentalRate }}{% if r.maxSleepingGuests %} &middot; sleeps {{ r.maxSleepingGuests }}{% endif %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="formField full">
+          <label for="reason">Reason / Notes</label>
+          <input type="text" id="reason" name="reason" placeholder="Maintenance issue, guest preference, upgrade, etc.">
+        </div>
+
+        <div class="formActions">
+          <button type="submit" class="submitButton">Move Guest</button>
+          <a href="{{ url_for('home') }}" class="commandButton">Cancel</a>
+        </div>
+      </form>
+      {% else %}
+        <div class="emptyState" style="margin-top: 20px;">
+          No active room assignments right now. Nothing to move.
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- History of Recent Moves -->
+    {% if recent_moves and recent_moves|length > 0 %}
+    <div class="reportLayout" style="grid-template-columns: 1fr; margin-top: 24px;">
+      <div id="catRight">
+        <div class="reportHeader">
+          <span class="eyebrow">Recent Activity</span>
+          <h2 style="font-size: 1.4em;">Last 10 room moves</h2>
+        </div>
+        <table class="reportTable">
+          <thead>
+            <tr>
+              <th>Guest</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Moved</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in recent_moves %}
+            <tr>
+              <td>{{ m.guest }}</td>
+              <td>Room {{ m.fromRoom }}</td>
+              <td>Room {{ m.toRoom }}</td>
+              <td>{{ m.moveDate }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

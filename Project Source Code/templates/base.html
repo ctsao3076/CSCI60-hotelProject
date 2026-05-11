@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Resort Hotels</title>
+
+    <!-- Formatting -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    {% block head_extra %}{% endblock %}
+  </head>
+  <body>
+    <header>
+      <div class="headerInner">
+        <div id="leftHeader">
+          <a href="{{ url_for('home') }}">
+            <div class="brand">
+              <span class="brandTitle">Last Resort</span>
+              <span class="brandTagline">Hotels &amp; Reserves</span>
+            </div>
+          </a>
+        </div>
+
+        <div id="midHeader">
+          <form id="searchBoxForm" action="{{ url_for('search') }}" method="post">
+            <input id="searchBox" type="text" placeholder="Search guests or rooms" name="search">
+            <button type="submit">Search</button>
+          </form>
+        </div>
+
+        <div id="rightHeader">
+          <a class="headerButton" href="{{ url_for('add_customer') }}">+ Guest</a>
+          <a class="headerButton solid" href="{{ url_for('add_reservation') }}">+ Reservation</a>
+        </div>
+      </div>
+
+      <nav class="primaryNav">
+        <div class="primaryNavInner">
+          <a href="{{ url_for('home') }}"
+             class="{% if current_endpoint == 'home' %}active{% endif %}">Home</a>
+          <a href="{{ url_for('rooms_showcase') }}"
+             class="{% if current_endpoint == 'rooms_showcase' %}active{% endif %}">Rooms &amp; Suites</a>
+          <a href="{{ url_for('amenities_showcase') }}"
+             class="{% if current_endpoint == 'amenities_showcase' %}active{% endif %}">Amenities</a>
+          <a href="{{ url_for('dashboard') }}"
+             class="{% if current_endpoint == 'dashboard' %}active{% endif %}">Dashboard</a>
+          <div class="dropdown">
+            <p class="dropdownSelect">Reports &#9662;</p>
+            <div class="dropdownContent">
+              {% for r in reports %}
+                <a href="{{ url_for(r.endpoint) }}">{{ r.id }}. {{ r.label }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          <a href="{{ url_for('guests') }}"
+             class="{% if current_endpoint in ('guests','room_change') %}active{% endif %}">Manage Guests</a>
+        </div>
+      </nav>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container" style="margin-top: 24px;">
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block container %}{% endblock %}
+
+    <footer>
+      <div class="footerInner">
+        <div class="footerBrand">
+          <div class="brand">
+            <span class="brandTitle">Last Resort</span>
+            <span class="brandTagline">Hotels &amp; Reserves</span>
+          </div>
+          <p style="margin-top: 14px; max-width: 320px; color: rgba(250,246,239,0.65); font-size: 0.85em;">
+            A collection of luxury hotels and resorts dedicated to timeless service and unforgettable stays.
+          </p>
+        </div>
+        <div id="footerLeft">
+          <div style="margin-bottom: 14px;">
+            <a href="#">Contact</a>
+            <a href="#">Directions</a>
+            <a href="#">Help</a>
+          </div>
+          <div style="font-size: 0.92em;">+1 (800) 555&middot;1855</div>
+          <div style="font-size: 0.92em;">concierge@lastresort.com</div>
+        </div>
+        <div id="footerRight">
+          <div class="eyebrow" style="color: var(--gold-bright); margin-bottom: 8px;">Hours</div>
+          <div>Front Desk &middot; 24 hours</div>
+          <div>Concierge &middot; 6am &ndash; 11pm</div>
+          <div>Reservations &middot; 7am &ndash; 10pm</div>
+        </div>
+      </div>
+      <div class="footerCopy">
+        Last Resort Hotels &copy; 2026 &nbsp;&middot;&nbsp; Database Design &amp; Implementation
+      </div>
+    </footer>
+  </body>
+</html>

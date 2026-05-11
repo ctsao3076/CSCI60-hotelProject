@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block head_extra %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block container %}
+
+<section class="pageIntro">
+  <span class="eyebrow">Operations &amp; Performance</span>
+  <h1>Hotel Dashboard</h1>
+  <hr class="rule center">
+  <p>A live look at how Last Resort is performing.</p>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- KPI Statistics -->
+    <div class="kpiRow">
+      <div class="kpiCard">
+        <div class="kpiNumber">${{ "{:,}".format(kpi.totalRevenue or 0) }}</div>
+        <div class="kpiLabel">Lifetime Revenue</div>
+      </div>
+      <div class="kpiCard">
+        <div class="kpiNumber">{{ kpi.occupancyRate }}%</div>
+        <div class="kpiLabel">Occupancy Rate</div>
+      </div>
+      <div class="kpiCard">
+        <div class="kpiNumber">{{ kpi.totalGuests }}</div>
+        <div class="kpiLabel">Total Guests</div>
+      </div>
+      <div class="kpiCard">
+        <div class="kpiNumber">{{ kpi.repeatGuests }}</div>
+        <div class="kpiLabel">Repeat Guests</div>
+      </div>
+    </div>
+
+    <div class="dashGrid" style="margin-top: 32px;">
+
+      <!-- Revenue Growth -->
+      <div class="dashCard full">
+        <span class="dashSub">Revenue</span>
+        <h3>Revenue Growth Over Time</h3>
+        <div class="dashCanvasWrap tall">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Occupancy Rate -->
+      <div class="dashCard">
+        <span class="dashSub">Capacity</span>
+        <h3>Occupancy Right Now</h3>
+        <div class="dashCanvasWrap">
+          <canvas id="occupancyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Revenue by Charge Type -->
+      <div class="dashCard">
+        <span class="dashSub">Mix</span>
+        <h3>Revenue by Charge Type</h3>
+        <div class="dashCanvasWrap">
+          <canvas id="chargeTypeChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Loyalty Bar Chart -->
+      <div class="dashCard">
+        <span class="dashSub">Loyalty</span>
+        <h3>Guest Stays Distribution</h3>
+        <div class="dashCanvasWrap">
+          <canvas id="loyaltyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Top Loyal Guests -->
+      <div class="dashCard">
+        <span class="dashSub">Honor Roll</span>
+        <h3>Top Loyal Guests</h3>
+        {% if topGuests and topGuests|length > 0 %}
+        <ol class="loyaltyList">
+          {% for g in topGuests %}
+            <li>
+              <span class="loyaltyRank">{{ loop.index }}</span>
+              <span class="loyaltyName">{{ g.name }}</span>
+              <span class="loyaltyStat">{{ g.stays }} stay{{ 's' if g.stays != 1 else '' }} &middot; ${{ "{:,}".format(g.spend or 0) }}</span>
+            </li>
+          {% endfor %}
+        </ol>
+        {% else %}
+          <div class="emptyState">No guest history yet.</div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+// Formatting
+const TOKENS = {
+  charcoal: '#1a1a1a',
+  gold:     '#a07842',
+  goldBright: '#c89c5e',
+  goldPale: '#e5d4ae',
+  champagne: '#d4b87f',
+  ivory:    '#faf6ef',
+  cream:    '#f4ecdc',
+  stone:    '#e8dfcb',
+  warmGray: '#8a7f70',
+  rose:     '#b85c4a',
+};
+
+Chart.defaults.font.family = "'Lato', sans-serif";
+Chart.defaults.color = TOKENS.warmGray;
+Chart.defaults.borderColor = TOKENS.stone;
+
+// Revenue Growth
+const revenueData = {{ charts.revenue|tojson }};
+new Chart(document.getElementById('revenueChart'), {
+  type: 'line',
+  data: {
+    labels: revenueData.labels,
+    datasets: [{
+      label: 'Revenue ($)',
+      data: revenueData.values,
+      borderColor: TOKENS.gold,
+      backgroundColor: 'rgba(160, 120, 66, 0.12)',
+      fill: true,
+      tension: 0.35,
+      pointRadius: 4,
+      pointBackgroundColor: TOKENS.charcoal,
+      pointBorderColor: TOKENS.gold,
+      pointHoverRadius: 6,
+      borderWidth: 2,
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: TOKENS.charcoal,
+        titleColor: TOKENS.goldBright,
+        bodyColor: TOKENS.ivory,
+        callbacks: {
+          label: ctx => '$' + ctx.parsed.y.toLocaleString()
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(232, 223, 203, 0.5)' }, ticks: { color: TOKENS.warmGray } },
+      y: {
+        grid: { color: 'rgba(232, 223, 203, 0.5)' },
+        ticks: {
+          color: TOKENS.warmGray,
+          callback: v => '$' + v.toLocaleString()
+        }
+      }
+    }
+  }
+});
+
+// Occupancy Rate
+const occData = {{ charts.occupancy|tojson }};
+new Chart(document.getElementById('occupancyChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Occupied', 'Available', 'Maintenance'],
+    datasets: [{
+      data: [occData.occupied, occData.available, occData.maintenance],
+      backgroundColor: [TOKENS.gold, TOKENS.charcoal, TOKENS.goldPale],
+      borderColor: TOKENS.ivory,
+      borderWidth: 4,
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    cutout: '62%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 16, font: { size: 11 }, color: TOKENS.warmGray, boxWidth: 12 }
+      },
+      tooltip: { backgroundColor: TOKENS.charcoal, titleColor: TOKENS.goldBright, bodyColor: TOKENS.ivory }
+    }
+  }
+});
+
+// Revenue by Charge Type -----
+const ctData = {{ charts.chargeType|tojson }};
+new Chart(document.getElementById('chargeTypeChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ctData.labels,
+    datasets: [{
+      data: ctData.values,
+      backgroundColor: [TOKENS.gold, TOKENS.charcoal, TOKENS.goldBright, TOKENS.warmGray, TOKENS.goldPale, TOKENS.rose, TOKENS.champagne],
+      borderColor: TOKENS.ivory,
+      borderWidth: 4,
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    cutout: '50%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 12, font: { size: 11 }, color: TOKENS.warmGray, boxWidth: 12 }
+      },
+      tooltip: {
+        backgroundColor: TOKENS.charcoal,
+        titleColor: TOKENS.goldBright,
+        bodyColor: TOKENS.ivory,
+        callbacks: { label: ctx => ctx.label + ': $' + ctx.parsed.toLocaleString() }
+      }
+    }
+  }
+});
+
+// Loyalty Distribution
+const loyData = {{ charts.loyalty|tojson }};
+new Chart(document.getElementById('loyaltyChart'), {
+  type: 'bar',
+  data: {
+    labels: loyData.labels,
+    datasets: [{
+      label: 'Guests',
+      data: loyData.values,
+      backgroundColor: TOKENS.gold,
+      borderColor: TOKENS.charcoal,
+      borderWidth: 1,
+      borderRadius: 0,
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { backgroundColor: TOKENS.charcoal, titleColor: TOKENS.goldBright, bodyColor: TOKENS.ivory }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: TOKENS.warmGray } },
+      y: {
+        beginAtZero: true,
+        grid: { color: 'rgba(232, 223, 203, 0.5)' },
+        ticks: { color: TOKENS.warmGray, stepSize: 1 }
+      }
+    }
+  }
+});
+</script>
+
+{% endblock %}

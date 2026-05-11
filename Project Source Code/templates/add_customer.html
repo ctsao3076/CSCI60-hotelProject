@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<div class="container">
+  <section class="formPage">
+    <span class="eyebrow">Guest Records</span>
+    <h1>New Guest</h1>
+    <p class="muted">Register a new guest, host, or billing contact.</p>
+
+    <form method="POST" class="formGrid">
+
+      <div class="formField">
+        <label for="firstName">First Name *</label>
+        <input type="text" id="firstName" name="firstName" required>
+      </div>
+
+      <div class="formField">
+        <label for="lastName">Last Name *</label>
+        <input type="text" id="lastName" name="lastName" required>
+      </div>
+
+      <div class="formField">
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="formField">
+        <label for="phone">Phone *</label>
+        <input type="tel" id="phone" name="phone" required>
+      </div>
+
+      <div class="formField full">
+        <label for="address">Address</label>
+        <input type="text" id="address" name="address" placeholder="Street, City, State">
+      </div>
+
+      <div class="formField">
+        <label for="organizationId">Organization</label>
+        <select id="organizationId" name="organizationId">
+          <option value="">— none —</option>
+          {% for o in organizations %}
+            <option value="{{ o.organizationId }}">{{ o.orgName }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="formField">
+        <label for="qualificationRating">Qualification Rating</label>
+        <select id="qualificationRating" name="qualificationRating">
+          <option value="NEW" selected>NEW</option>
+          <option value="EXCELLENT">EXCELLENT</option>
+          <option value="GOOD">GOOD</option>
+          <option value="FAIR">FAIR</option>
+          <option value="POOR">POOR</option>
+        </select>
+      </div>
+
+      <div class="formField">
+        <label for="paymentPromptness">Payment Promptness</label>
+        <select id="paymentPromptness" name="paymentPromptness">
+          <option value="FAIR" selected>FAIR</option>
+          <option value="EXCELLENT">EXCELLENT</option>
+          <option value="GOOD">GOOD</option>
+          <option value="POOR">POOR</option>
+        </select>
+      </div>
+
+      <div class="checkboxRow">
+        <label><input type="checkbox" name="confidentialLocation"> Keep guest location confidential</label>
+      </div>
+
+      <div class="formActions">
+        <button type="submit" class="submitButton">Create Guest</button>
+        <a href="{{ url_for('home') }}" class="commandButton">Cancel</a>
+      </div>
+    </form>
+  </section>
+</div>
+
+{% endblock %}

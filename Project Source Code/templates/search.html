@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<section class="pageIntro">
+  <span class="eyebrow">Search</span>
+  <h1>Results</h1>
+  <hr class="rule center">
+  <p>
+    {% if term %}
+      Looking for <strong>"{{ term }}"</strong> across guests and rooms.
+    {% else %}
+      Empty search.
+    {% endif %}
+  </p>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <div class="searchSection">
+      <h2>Guests</h2>
+      {% if customers and customers|length > 0 %}
+      <table class="reportTable">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
+        </thead>
+        <tbody>
+          {% for c in customers %}
+          <tr>
+            <td><strong style="color: var(--charcoal);">{{ c.name }}</strong></td>
+            <td>{{ c.email }}</td>
+            <td>{{ c.phone }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="emptyState">No matching guests.</div>
+      {% endif %}
+    </div>
+
+    <div class="searchSection">
+      <h2>Rooms</h2>
+      {% if rooms and rooms|length > 0 %}
+      <table class="reportTable">
+        <thead>
+          <tr><th>Wing</th><th>Room</th><th>Type</th><th>Status</th><th>Rate ($)</th></tr>
+        </thead>
+        <tbody>
+          {% for r in rooms %}
+          <tr>
+            <td>{{ r.wingDesignation }}</td>
+            <td><strong style="color: var(--charcoal);">{{ r.roomNumber }}</strong></td>
+            <td>{{ r.roomType|title }}</td>
+            <td>{{ r.status|title }}</td>
+            <td>{{ r.baseRentalRate }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="emptyState">No matching rooms.</div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

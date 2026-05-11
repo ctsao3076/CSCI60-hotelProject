@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<div class="container">
+  <section class="formPage">
+    <span class="eyebrow">Reservations</span>
+    <h1>New Reservation</h1>
+    <p class="muted">Reserve sleeping rooms for a guest. Specific rooms are assigned closer to the check-in date by the front desk.</p>
+
+    <form method="POST" class="formGrid">
+
+      <div class="formField full">
+        <label for="customerId">Guest *</label>
+        <select id="customerId" name="customerId" required>
+          <option value="">— select a customer —</option>
+          {% for c in customers %}
+            <option value="{{ c.customerId }}">{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="formField full">
+        <label for="eventId">Linked Event (optional)</label>
+        <select id="eventId" name="eventId">
+          <option value="">— none —</option>
+          {% for e in events %}
+            <option value="{{ e.eventId }}">{{ e.eventName }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="formField">
+        <label for="checkInDate">Check-In Date *</label>
+        <input type="date" id="checkInDate" name="checkInDate" required>
+      </div>
+
+      <div class="formField">
+        <label for="checkOutDate">Check-Out Date *</label>
+        <input type="date" id="checkOutDate" name="checkOutDate" required>
+      </div>
+
+      <div class="formField">
+        <label for="numGuests">Number of Guests</label>
+        <input type="number" id="numGuests" name="numGuests" min="1" value="1">
+      </div>
+
+      <div class="formField">
+        <label for="reservationStatus">Status</label>
+        <select id="reservationStatus" name="reservationStatus">
+          <option value="PENDING" selected>PENDING</option>
+          <option value="CONFIRMED">CONFIRMED</option>
+          <option value="CANCELLED">CANCELLED</option>
+        </select>
+      </div>
+
+      <div class="formField">
+        <label for="advanceDepositAmount">Deposit Amount ($)</label>
+        <input type="number" id="advanceDepositAmount" name="advanceDepositAmount" min="0">
+      </div>
+
+      <div class="checkboxRow">
+        <label><input type="checkbox" name="advanceDepositRequired"> Deposit required</label>
+        <label><input type="checkbox" name="depositPaid"> Deposit already paid</label>
+      </div>
+
+      <div class="formActions">
+        <button type="submit" class="submitButton">Create Reservation</button>
+        <a href="{{ url_for('home') }}" class="commandButton">Cancel</a>
+      </div>
+    </form>
+  </section>
+</div>
+
+{% endblock %}

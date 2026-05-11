@@ -1,0 +1,68 @@
+Report Queries
+
+ 1. Currently Occupied rooms with guest info
+
+ 2. Rooms available right now
+
+ 3. Total charges per customer, sorted by highest spend
+
+ 4. Unpaid / pending charges of a customer
+
+ 5. Upcoming events with host name and estimated attendance
+
+ 6. Rooms booked per event
+
+ 7. Reservations missing required deposits
+
+ 8. Smoking rooms per pool, sorted by rate
+
+ 9. Available rooms with all amenities listed, for a given date range
+
+10. Rooms that can sleep a specific number of guests
+
+11. Bed types available per room (for guests filtering by bed preference)
+
+12. Guests full stay history
+
+13. All facilities at the complex (pool, gym, spa, etc.)
+
+
+Application Queries 
+
+A1.  Home Page Summary (index.html)
+       - Count of rooms, occupied rooms, open reservations, upcoming events,
+         total customers
+
+A2.  Search Bar (search.html)
+       - Guest match by name and email
+       - Room match by number and type
+
+A3.  Rooms & Suites Showcase 
+       - Live room directory 
+       - Count and minimum rate per room type 
+
+A4.  Amenities Showcase (amenities_showcase.html)
+       - Every facility with its complex
+
+A5.  Operations Dashboard (dashboard.html)
+       - KPI statistics:
+       - Revenue growth
+       - Occupancy rate
+       - Revenue by charge type
+       - Loyalty distribution
+       - Top loyal guests leaderboard
+
+A6.  Manage Guests (guests.html)
+       - Every customer with lifetime stay count and an active-stay flag
+       - Delete Guests
+
+A7.  Room Change (room_change.html)
+       a. List active room assignments 
+       b. List rooms that are AVAILABLE and not in use
+       c. Recent room moves
+       d. Perform the move: close old assignment, free old room,
+          open new assignment, mark new room OCCUPIED
+
+A8.  Add Reservation (add_reservation.html)
+
+A9. Add Customer (add_customer.html)
